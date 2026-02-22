@@ -1,0 +1,28 @@
+name: CrewONE 데일리 미션 생성
+
+on:
+  schedule:
+    - cron: '0 15 * * *'  # 매일 UTC 15:00 = KST 00:00
+  workflow_dispatch:       # 수동 실행 버튼 (테스트용)
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v3
+
+      - name: Python 설치
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: 패키지 설치
+        run: pip install openai supabase
+
+      - name: 미션 생성 실행
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: python generate_daily_missions.py
